@@ -32,3 +32,26 @@
 - **状態管理**: Zustand + TanStack Query
 
 詳細は [05-tech-architecture.md](docs/05-tech-architecture.md) を参照。
+
+## 開発の始め方
+
+```bash
+npm install
+npx expo start          # iOS/Android (Expo Go) ※3Dはdev client推奨
+npx expo start --web    # ブラウザで動作確認
+```
+
+- データはMVP段階ではローカル保存（AsyncStorage）。`supabase/migrations/` にバックエンド接続用のスキーマを用意済み。
+- クローゼットが空のとき「デモデータを入れる」でサンプル10着＋検討中3着を投入できる。
+- 3Dはプリミティブベースの仮アセット。`src/components/three/` のprops契約（`AvatarConfig` / `ItemLook`）を保ったままGLBに差し替える設計。
+
+## 実装状況（MVP）
+
+- ✅ デフォルメ3Dアバター（パーツ・体型・身長カスタマイズ / プリミティブ構成）
+- ✅ マイルーム表示（3D部屋＋クローゼット/ミラー導線）
+- ✅ 手持ち服の登録・クローゼット一覧（検索・カテゴリ/お気に入り絞り込み）
+- ✅ 着せ替え（8スロット、ワンピース排他、レイヤード、ランダム）
+- ✅ 気になる服の登録・仮試着（検討中バッジ・試着回数記録）
+- ✅ 相性スコア（ルールベース）＋おすすめコーデ自動組成＋ワンタップ試着
+- ✅ コーデ保存・一覧・再着用
+- ⬜ Supabase接続 / 画像のStorage保存 / コーデ3Dスナップショット / GLBアセット

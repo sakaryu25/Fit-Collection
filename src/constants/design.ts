@@ -1,0 +1,15 @@
+export const D = {
+  bg: '#FAFAFA',
+  surface: '#FFFFFF',
+  textPrimary: '#111111',
+  textSecondary: '#777777',
+  border: '#EEEEEE',
+  accent: '#111111',
+  accentWarm: '#C9B8A8',
+  danger: '#E05B5B',
+  scoreGood: '#4CAF7D',
+  scoreMid: '#E5C45A',
+  radiusCard: 16,
+  radiusButton: 12,
+  radiusThumb: 12,
+} as const;
