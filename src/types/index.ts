@@ -71,6 +71,7 @@ export interface AvatarConfig {
   skinColor: string;       // hex
   faceShape: 'round' | 'oval' | 'sharp';
   eyes: 'round' | 'oval' | 'line';
+  brows: 'natural' | 'straight' | 'thin';
   mouth: 'smile' | 'small' | 'open';
   hairStyle: 'short' | 'bob' | 'medium' | 'long' | 'bun' | 'curly';
   hairColor: string;       // hex
@@ -82,6 +83,7 @@ export const DEFAULT_AVATAR: AvatarConfig = {
   skinColor: '#F2C9A8',
   faceShape: 'round',
   eyes: 'round',
+  brows: 'natural',
   mouth: 'smile',
   hairStyle: 'bob',
   hairColor: '#3B2B20',

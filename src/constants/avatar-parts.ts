@@ -26,6 +26,12 @@ export const EYE_STYLES = [
   { id: 'line', label: 'すずしげ' },
 ] as const;
 
+export const BROW_STYLES = [
+  { id: 'natural', label: 'ナチュラル' },
+  { id: 'straight', label: 'ストレート' },
+  { id: 'thin', label: 'ほそめ' },
+] as const;
+
 export const MOUTH_STYLES = [
   { id: 'smile', label: 'にっこり' },
   { id: 'small', label: 'ちいさめ' },

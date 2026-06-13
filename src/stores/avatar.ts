@@ -27,6 +27,7 @@ export const useAvatar = create<AvatarState>()(
             skinColor: pick(['#FBE3CC', '#F2C9A8', '#E0AC85', '#C68B62', '#9D6845', '#6F4A30']),
             faceShape: pick(['round', 'oval', 'sharp'] as const),
             eyes: pick(['round', 'oval', 'line'] as const),
+            brows: pick(['natural', 'straight', 'thin'] as const),
             mouth: pick(['smile', 'small', 'open'] as const),
             hairStyle: pick(['short', 'bob', 'medium', 'long', 'bun', 'curly'] as const),
             hairColor: pick(['#1C1C1C', '#3B2B20', '#5C4330', '#8B6242', '#B58A5C', '#D9B88A', '#8E8E8E', '#C46A6A']),

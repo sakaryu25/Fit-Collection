@@ -18,7 +18,7 @@ interface AvatarViewerProps {
 const CAMERA: Record<ViewerMode, { position: [number, number, number]; fov: number }> = {
   room: { position: [0, 1.2, 7], fov: 38 },
   tryon: { position: [0, 1.0, 6.2], fov: 36 },
-  creator: { position: [0, 1.2, 5.2], fov: 34 },
+  creator: { position: [0, 1.05, 7.2], fov: 34 },
   mini: { position: [0, 1.0, 6.4], fov: 34 },
 };
 

@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import type { AvatarConfig, Slot, WornItem } from '@/types';
 import { Garment } from './Garments';
 
-// デフォルメ3.5頭身アバターをプリミティブで構成。
+// デフォルメ3.5頭身アバターをプリミティブで構成（Mii風）。
 // 単位: 身長 ≈ 2.0。将来GLB化してもpropsの契約(config/worn)は維持する。
 
 const HEIGHT_SCALE = { short: 0.93, mid: 1.0, tall: 1.07 } as const;
@@ -15,64 +15,92 @@ export interface AvatarRigProps {
   worn?: Partial<Record<Slot, WornItem>>;
 }
 
+// Mii風の髪: 頭頂キャップ + 前髪(バング) + サイドロック の組み合わせで構成
 function Hair({ style, color }: { style: AvatarConfig['hairStyle']; color: string }) {
   const mat = <meshStandardMaterial color={color} roughness={0.85} />;
+
+  // 頭頂を覆うキャップ（目にかからない高さで止める）
+  const cap = (
+    <mesh position={[0, 0.08, -0.02]} scale={[1.07, 1.0, 1.04]}>
+      <sphereGeometry args={[0.42, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.42]} />
+      {mat}
+    </mesh>
+  );
+  // 前髪: 額に沿った薄い帯（眉の少し上、目にはかからない高さで止まる）
+  const bangs = (
+    <mesh position={[0, 0, 0.02]}>
+      <sphereGeometry args={[0.435, 24, 10, 0, Math.PI * 2, Math.PI * 0.26, Math.PI * 0.15]} />
+      {mat}
+    </mesh>
+  );
+  // サイドロック: 耳の前に垂れる髪
+  const sideLocks = (len: number, curl = 0) => (
+    <group>
+      {[-1, 1].map((side) => (
+        <mesh
+          key={side}
+          position={[side * 0.37, -0.08 - len / 2 + 0.12, 0.04]}
+          rotation={[0, 0, side * -curl]}
+        >
+          <capsuleGeometry args={[0.09, len, 6, 10]} />
+          {mat}
+        </mesh>
+      ))}
+    </group>
+  );
+  // 後ろ髪
+  const back = (len: number, width = 1.0) => (
+    <mesh position={[0, -0.02 - len * 0.3, -0.21]} scale={[width, 1, 0.5]}>
+      <capsuleGeometry args={[0.3, len, 8, 14]} />
+      {mat}
+    </mesh>
+  );
+
   switch (style) {
     case 'short':
       return (
         <group>
-          <mesh position={[0, 0.13, -0.08]} scale={[1.06, 0.92, 1.06]}>
-            <sphereGeometry args={[0.42, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.46]} />
+          {cap}
+          {bangs}
+          <mesh position={[0, 0.0, -0.22]} scale={[1.0, 0.78, 0.42]}>
+            <sphereGeometry args={[0.42, 20, 14]} />
             {mat}
           </mesh>
         </group>
       );
     case 'bob':
+      // Mii風: 前髪ぱっつん + 内巻きサイド + 肩上ボブ
       return (
         <group>
-          <mesh position={[0, 0.13, -0.09]} scale={[1.08, 0.98, 1.08]}>
-            <sphereGeometry args={[0.42, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.48]} />
-            {mat}
-          </mesh>
-          <mesh position={[0, -0.1, -0.2]} scale={[1.02, 0.7, 0.5]}>
-            <sphereGeometry args={[0.42, 24, 16]} />
-            {mat}
-          </mesh>
+          {cap}
+          {bangs}
+          {sideLocks(0.3, 0.18)}
+          {back(0.28, 1.0)}
         </group>
       );
     case 'medium':
       return (
         <group>
-          <mesh position={[0, 0.13, -0.09]} scale={[1.06, 0.96, 1.06]}>
-            <sphereGeometry args={[0.42, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.48]} />
-            {mat}
-          </mesh>
-          <mesh position={[0, -0.3, -0.2]} scale={[0.9, 1.0, 0.45]}>
-            <sphereGeometry args={[0.42, 24, 16]} />
-            {mat}
-          </mesh>
+          {cap}
+          {bangs}
+          {sideLocks(0.48, 0.1)}
+          {back(0.5, 0.92)}
         </group>
       );
     case 'long':
       return (
         <group>
-          <mesh position={[0, 0.13, -0.09]} scale={[1.06, 0.96, 1.06]}>
-            <sphereGeometry args={[0.42, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.48]} />
-            {mat}
-          </mesh>
-          <mesh position={[0, -0.55, -0.18]} scale={[0.75, 1.6, 0.4]}>
-            <sphereGeometry args={[0.42, 24, 16]} />
-            {mat}
-          </mesh>
+          {cap}
+          {bangs}
+          {sideLocks(0.6, 0.06)}
+          {back(0.9, 0.85)}
         </group>
       );
     case 'bun':
       return (
         <group>
-          <mesh position={[0, 0.13, -0.08]} scale={[1.05, 0.9, 1.05]}>
-            <sphereGeometry args={[0.42, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.46]} />
-            {mat}
-          </mesh>
+          {cap}
+          {bangs}
           <mesh position={[0, 0.46, -0.1]}>
             <sphereGeometry args={[0.16, 16, 12]} />
             {mat}
@@ -82,12 +110,15 @@ function Hair({ style, color }: { style: AvatarConfig['hairStyle']; color: strin
     case 'curly':
       return (
         <group>
-          {[[-0.22, 0.18], [0, 0.3], [0.22, 0.18], [-0.3, -0.05], [0.3, -0.05]].map(([x, y], i) => (
-            <mesh key={i} position={[x, y, -0.05]}>
-              <sphereGeometry args={[0.24, 16, 12]} />
+          {cap}
+          {[[-0.26, 0.22], [0, 0.34], [0.26, 0.22], [-0.36, -0.02], [0.36, -0.02]].map(([x, y], i) => (
+            <mesh key={i} position={[x, y, -0.02]}>
+              <sphereGeometry args={[0.2, 14, 10]} />
               {mat}
             </mesh>
           ))}
+          {sideLocks(0.3, 0.25)}
+          {back(0.28, 1.02)}
         </group>
       );
   }
@@ -97,21 +128,43 @@ function Face({ config }: { config: AvatarConfig }) {
   const eyeY = 0.02;
   const eyeX = 0.16;
   const eyeZ = 0.36;
+  const brows = config.brows ?? 'natural'; // 旧保存データはbrows未設定
   return (
     <group>
       {/* 目 */}
       {[-eyeX, eyeX].map((x, i) => (
+        <group key={i} position={[x, eyeY, eyeZ]}>
+          <mesh
+            scale={
+              config.eyes === 'round' ? [1, 1.3, 0.5]
+              : config.eyes === 'oval' ? [1, 0.9, 0.5]
+              : [1.25, 0.32, 0.5]
+            }
+          >
+            <sphereGeometry args={[0.05, 12, 10]} />
+            <meshStandardMaterial color="#26201C" roughness={0.35} />
+          </mesh>
+          {/* 瞳ハイライト */}
+          {config.eyes !== 'line' && (
+            <mesh position={[0.015, 0.025, 0.028]} scale={[1, 1, 0.6]}>
+              <sphereGeometry args={[0.014, 8, 8]} />
+              <meshBasicMaterial color="#FFFFFF" />
+            </mesh>
+          )}
+        </group>
+      ))}
+      {/* 眉 */}
+      {[-eyeX, eyeX].map((x, i) => (
         <mesh
           key={i}
-          position={[x, eyeY, eyeZ]}
+          position={[x, eyeY + 0.09, eyeZ - 0.01]}
+          rotation={[0, 0, (i === 0 ? 1 : -1) * (brows === 'natural' ? 0.18 : 0)]}
           scale={
-            config.eyes === 'round' ? [1, 1, 0.5]
-            : config.eyes === 'oval' ? [1, 0.75, 0.5]
-            : [1.2, 0.28, 0.5]
+            brows === 'thin' ? [1, 0.5, 1] : [1, 1, 1]
           }
         >
-          <sphereGeometry args={[0.05, 12, 10]} />
-          <meshStandardMaterial color="#26201C" roughness={0.4} />
+          <capsuleGeometry args={[0.016, 0.08, 4, 8]} />
+          <meshStandardMaterial color="#3A2E24" roughness={0.8} />
         </mesh>
       ))}
       {/* ほっぺ */}
@@ -123,7 +176,7 @@ function Face({ config }: { config: AvatarConfig }) {
       ))}
       {/* 口 */}
       <mesh
-        position={[0, -0.14, 0.37]}
+        position={[0, -0.15, 0.37]}
         scale={
           config.mouth === 'smile' ? [1.4, 0.5, 0.4]
           : config.mouth === 'small' ? [0.7, 0.5, 0.4]
@@ -147,7 +200,7 @@ export function AvatarRig({ config, worn = {} }: AvatarRigProps) {
 
   return (
     <group scale={[1, h, 1]}>
-      {/* ===== 頭 (y: 1.45 中心, 半径0.42) ===== */}
+      {/* ===== 頭 (y: 1.5 中心, 半径0.42) ===== */}
       <group position={[0, 1.5, 0]}>
         <mesh scale={[FACE_W[config.faceShape], 1, 0.95]}>
           <sphereGeometry args={[0.42, 28, 20]} />
